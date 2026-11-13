@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tek Prompt, 8 Farklı Stil | Claude ile kodla çizilen animasyon</title>
+<meta name="description" content="Sahneyi bir kez tarif et, stili değiştir. Claude'a yapıştırılacak hazır prompt'lar: Boğaz'da vapur, Kapadokya'da balonlar ve Doğu Ekspresi için 8 farklı stil.">
+<meta name="theme-color" content="#F4EFE6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F4EFE6;
+    --ink: #101114;
+    --tomato: #FF5A3C;
+    /* Krem zemin üstünde büyük başlık için 3:1 kontrastı sağlayan biraz koyu ton */
+    --tomato-text: #E5432A;
+    --gold: #FFD23F;
+    --muted: #5F626B; /* #6C6F78'in krem üstünde 4.5:1'i geçen tonu */
+    --white: #FFFFFF;
+    --line: rgba(16, 17, 20, 0.12);
+    --shadow: 0 1px 2px rgba(16, 17, 20, 0.04), 0 12px 32px rgba(16, 17, 20, 0.08);
+    --radius-card: 30px;
+    --mono: "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 1040px;
+    margin: 0 auto;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  h1, h2, h3 {
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    margin: 0;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---------- Başlık bölümü ---------- */
+  .hero {
+    position: relative;
+    padding: 44px 0 36px;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    right: -120px;
+    top: -140px;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 210, 63, 0.55), rgba(255, 210, 63, 0) 68%);
+    pointer-events: none;
+  }
+
+  .hero .wrap { position: relative; }
+
+  .pill {
+    display: inline-block;
+    padding: 7px 16px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--ink);
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+  }
+
+  .hero h1 {
+    margin-top: 20px;
+    font-size: clamp(38px, 11.6vw, 84px);
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+
+  .hero h1 span { display: block; }
+  .hero h1 .accent { color: var(--tomato-text); }
+
+  .lead {
+    margin: 20px 0 0;
+    max-width: 34em;
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  /* ---------- Bölüm başlıkları ---------- */
+  section { padding: 20px 0; }
+
+  .section-title {
+    font-size: 28px;
+    margin-bottom: 18px;
+  }
+
+  /* ---------- Nasıl kullanılır ---------- */
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+    counter-reset: step;
+  }
+
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--white);
+    border-radius: 28px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .steps li::before {
+    content: counter(step);
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--white);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 16px;
+  }
+
+  .steps li span { padding-top: 5px; }
+
+  /* ---------- Sahne kartları ---------- */
+  .cards {
+    display: grid;
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: var(--radius-card);
+    padding: 14px;
+    box-shadow: var(--shadow);
+    display: grid;
+    gap: 18px;
+  }
+
+  .cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 640 / 800;
+    object-fit: cover;
+    border-radius: 22px;
+    background: #E7E1D5;
+  }
+
+  .card-body { padding: 0 6px 6px; min-width: 0; }
+
+  .card h3 {
+    font-size: 26px;
+    margin-bottom: 4px;
+  }
+
+  .hint {
+    margin: 0 0 14px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chip {
+    appearance: none;
+    -webkit-appearance: none;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
+    background: var(--white);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease, transform .1s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .chip:hover { border-color: var(--ink); }
+  .chip:active { transform: scale(0.97); }
+
+  .chip[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--white);
+  }
+
+  .chip.custom { border-style: dashed; }
+  .chip.custom[aria-pressed="true"] { border-style: solid; }
+
+  .custom-field {
+    margin-top: 12px;
+  }
+
+  .custom-field[hidden] { display: none; }
+
+  .custom-field textarea {
+    display: block;
+    width: 100%;
+    min-height: 76px;
+    resize: vertical;
+    padding: 12px 14px;
+    border-radius: 18px;
+    border: 1.5px solid var(--ink);
+    background: var(--cream);
+    color: var(--ink);
+    font: inherit;
+    font-size: 16px; /* iOS'ta odaklanınca yakınlaşmayı önler */
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .custom-field textarea::placeholder { color: var(--muted); opacity: 1; }
+
+  /* ---------- Prompt kutusu ---------- */
+  .prompt {
+    margin-top: 16px;
+    background: var(--ink);
+    border-radius: 22px;
+    overflow: hidden;
+  }
+
+  .prompt-bar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 13px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .dot.r { background: #FF5F57; }
+  .dot.y { background: #FEBC2E; }
+  .dot.g { background: #28C840; }
+
+  .prompt-bar .file {
+    margin-left: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #A8ABB3;
+  }
+
+  .prompt-body {
+    margin: 0;
+    padding: 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: #E9E7E1;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  .prompt-body mark {
+    background: var(--gold);
+    color: var(--ink);
+    padding: 1px 5px;
+    border-radius: 5px;
+    font-weight: 700;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  /* ---------- Kopyala düğmesi ---------- */
+  .copy {
+    appearance: none;
+    -webkit-appearance: none;
+    margin-top: 14px;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--tomato);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 800;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255, 90, 60, 0.28);
+    transition: background-color .15s ease, transform .1s ease, box-shadow .15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .copy:active { transform: scale(0.98); }
+  .copy svg { width: 20px; height: 20px; flex: none; }
+  .copy .ic-check { display: none; }
+
+  .copy.done {
+    background: var(--gold);
+    box-shadow: 0 8px 20px rgba(255, 210, 63, 0.35);
+  }
+  .copy.done .ic-copy { display: none; }
+  .copy.done .ic-check { display: block; }
+
+  .copy.fail { background: var(--ink); color: var(--white); box-shadow: none; }
+
+  /* ---------- İpuçları ---------- */
+  .tips {
+    list-style: none;
+    margin: 0;
+    padding: 6px 24px;
+    background: var(--white);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow);
+  }
+
+  .tips li {
+    position: relative;
+    padding: 18px 0 18px 26px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .tips li + li { border-top: 1px solid var(--line); }
+
+  .tips li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 27px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 3px rgba(255, 210, 63, 0.35);
+  }
+
+  /* ---------- Alt bilgi ---------- */
+  footer {
+    padding: 36px 0 56px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  footer a {
+    color: var(--ink);
+    font-weight: 800;
+    text-decoration: underline;
+    text-decoration-color: var(--tomato);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    display: inline-block;
+    padding: 10px 2px;
+  }
+
+  /* ---------- Masaüstü ---------- */
+  @media (min-width: 720px) {
+    .wrap { padding-left: 32px; padding-right: 32px; }
+    .hero { padding: 80px 0 56px; }
+    .hero::before { right: -60px; top: -120px; width: 520px; height: 520px; }
+    .lead { font-size: 21px; }
+    section { padding: 28px 0; }
+    .section-title { font-size: 36px; margin-bottom: 24px; }
+    .steps { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .steps li { flex-direction: column; padding: 24px; gap: 16px; }
+    .steps li span { padding-top: 0; }
+    .card {
+      grid-template-columns: 300px 1fr;
+      gap: 32px;
+      padding: 20px;
+      align-items: start;
+    }
+    .card-body { padding: 10px 14px 10px 0; }
+    .card h3 { font-size: 32px; }
+    .copy { width: auto; min-width: 220px; }
+    .tips { padding: 10px 36px; }
+    .tips li { font-size: 17px; }
+  }
+
+  @media (min-width: 980px) {
+    .card { grid-template-columns: 340px 1fr; }
+  }
+
+  /* ---------- Hareket tercihi ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      transition: none !important;
+      animation: none !important;
+    }
+    .chip:active, .copy:active { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="pill">Claude ile</span>
+    <h1><span>Tek prompt.</span><span class="accent">8 farklı stil.</span></h1>
+    <p class="lead">Sahneyi bir kez tarif et, stili değiştir. Görsel yok, video yok; hepsini Claude kodla çiziyor.</p>
+  </div>
+</header>
+
+<main>
+  <section aria-labelledby="nasil">
+    <div class="wrap">
+      <h2 class="section-title" id="nasil">Nasıl kullanılır</h2>
+      <ol class="steps">
+        <li><span>Aşağıdan bir sahne seç ve bir stile dokun.</span></li>
+        <li><span>"Kopyala"ya bas, prompt'u Claude'a yapıştır.</span></li>
+        <li><span>Claude'un verdiği HTML dosyasını aç; animasyon hazır. Ekran kaydı alıp paylaşabilirsin.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="sahneler">
+    <div class="wrap">
+      <h2 class="section-title" id="sahneler">Sahneler</h2>
+      <div class="cards" id="cards"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="ipuclari">
+    <div class="wrap">
+      <h2 class="section-title" id="ipuclari">İpuçları</h2>
+      <ul class="tips">
+        <li>Sonuç beğenmediysen aynı sohbette "daha detaylı çiz" ya da "hareketi yavaşlat" yaz.</li>
+        <li>Kendi sahneni yazabilirsin: "Sahne:" satırını değiştir, gerisi aynı kalsın.</li>
+        <li>Aynı sahneyi farklı stillerde üretip arka arkaya koyarsan videodaki etkiyi alırsın.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    Hazırlayan: <a href="https://www.instagram.com/yakup.growth/" target="_blank" rel="noopener">@yakup.growth</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Veri ---------- */
+  var PLACEHOLDER = "[STİLİ BURAYA YAZ]";
+
+  var STYLES = [
+    "Minyatür", "İznik Çinisi", "Karagöz Perdesi", "Vitray",
+    "Neon Gece", "Kâğıt Kesme", "Retro Afiş", "Linol Baskı"
+  ];
+
+  var SCENES = [
+    {
+      id: "bogaz",
+      title: "Boğaz'da vapur",
+      image: "assets/bogaz.jpg",
+      alt: "Boğaz'da dalgalarda ilerleyen vapur, arkada Kız Kulesi ve İstanbul silüeti",
+      scene: "İstanbul Boğazı. Arkada Galata Kulesi ve cami silüeti, ortada Kız Kulesi, önde dalgalarda sallanan bir vapur. Bacasından duman çıkıyor, üstünde martılar uçuyor."
+    },
+    {
+      id: "kapadokya",
+      title: "Kapadokya'da balonlar",
+      image: "assets/kapadokya.jpg",
+      alt: "Gün doğumunda Kapadokya üzerinde yükselen sıcak hava balonları",
+      scene: "Kapadokya'da gün doğumu. Önde büyük bir sıcak hava balonu yükseliyor, arkada onlarca küçük balon. Altta peri bacaları ve vadiler, ufukta doğan güneş."
+    },
+    {
+      id: "dogu-ekspresi",
+      title: "Doğu Ekspresi",
+      image: "assets/dogu-ekspresi.jpg",
+      alt: "Karlı bir gecede taş köprüden geçen, pencereleri ışıklı Doğu Ekspresi",
+      scene: "Karlı bir gecede Doğu Ekspresi. Pencereleri ışıklı tren taş bir köprüden geçiyor. Arkada karlı dağlar, çam ağaçları ve ışıkları yanan küçük bir köy; lapa lapa kar yağıyor."
+    }
+  ];
+
+  /* Prompt şablonu: {SAHNE} ve {STİL} yerleri ayrı parçalar olarak tutulur,
+     böylece stil yerini altın zeminle vurgulayabiliriz. */
+  var TPL_HEAD = "Tek dosyalık, kendi kendine çalışan bir HTML yaz. 1080x1920 dikey karede 6 saniyelik, kusursuz döngüye giren bir animasyon oynatsın. Görsel, video ya da harici dosya kullanma; her şeyi kodla çiz.\n\nSahne: ";
+  var TPL_MID = "\n\nStil: ";
+  var TPL_TAIL = ". Renkler, dokular, çizgiler ve hareket bu stile tamamen uysun.\n\nHareket: En az üç katmanlı paralaks olsun, her şey sürekli hareket etsin, döngü yeri belli olmasın. Yalnızca HTML dosyasını ver.";
+
+  var COPIED_MS = 2000;
+
+  /* ---------- Yardımcılar ---------- */
+  function h(tag, attrs, children) {
+    var el = document.createElement(tag);
+    var k;
+    if (attrs) {
+      for (k in attrs) {
+        if (Object.prototype.hasOwnProperty.call(attrs, k)) el.setAttribute(k, attrs[k]);
+      }
+    }
+    (children || []).forEach(function (c) {
+      el.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+    return el;
+  }
+
+  function svgIcon(cls, d) {
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2.2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("class", cls);
+    d.forEach(function (path) {
+      var p = document.createElementNS(ns, "path");
+      p.setAttribute("d", path);
+      svg.appendChild(p);
+    });
+    return svg;
+  }
+
+  /* ---------- Kopyalama ---------- */
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.setAttribute("aria-hidden", "true");
+    ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px;";
+    document.body.appendChild(ta);
+    var ok = false;
+    try {
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      ok = document.execCommand("copy");
+    } catch (e) {
+      ok = false;
+    }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(
+        function () { return true; },
+        function () { return fallbackCopy(text); }
+      );
+    }
+    return Promise.resolve(fallbackCopy(text));
+  }
+
+  function selectNode(node) {
+    try {
+      var range = document.createRange();
+      range.selectNodeContents(node);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } catch (e) { /* sessizce geç */ }
+  }
+
+  /* ---------- Kart ---------- */
+  function createCard(data, index) {
+    var state = { selected: null, customText: "" }; // selected: stil adı | "__custom__" | null
+    var CUSTOM = "__custom__";
+    var timer = null;
+
+    function currentStyle() {
+      if (state.selected === CUSTOM) {
+        var t = state.customText.replace(/\s+/g, " ").trim().replace(/[.\s]+$/, "");
+        return t || null;
+      }
+      return state.selected;
+    }
+
+    /* Prompt'u parçalar halinde üretir; düz metin ve vurgulu görünüm aynı kaynaktan gelir. */
+    function buildParts() {
+      var style = currentStyle();
+      return [
+        { text: TPL_HEAD + data.scene + TPL_MID, hl: false },
+        { text: style || PLACEHOLDER, hl: true },
+        { text: TPL_TAIL, hl: false }
+      ];
+    }
+
+    function plainPrompt() {
+      return buildParts().map(function (p) { return p.text; }).join("");
+    }
+
+    /* Elemanlar */
+    var headingId = "sahne-" + data.id;
+    var promptBody = h("pre", { "class": "prompt-body", id: "prompt-" + data.id });
+    var status = h("p", { "class": "sr-only", "role": "status", "aria-live": "polite" });
+    var copyLabel = h("span", null, ["Kopyala"]);
+    var copyBtn = h("button", { "class": "copy", type: "button", "aria-describedby": "prompt-" + data.id }, [
+      svgIcon("ic-copy", ["M9 9h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2z", "M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"]),
+      svgIcon("ic-check", ["M5 12.5l4.5 4.5L19 7.5"]),
+      copyLabel
+    ]);
+
+    var textarea = h("textarea", {
+      id: "ozel-" + data.id,
+      rows: "2",
+      maxlength: "120",
+      placeholder: "Örn. suluboya, piksel sanatı, cam kırığı mozaik",
+      autocomplete: "off",
+      autocapitalize: "sentences",
+      spellcheck: "false"
+    });
+    var customLabel = h("label", { "class": "sr-only", "for": "ozel-" + data.id }, ["Kendi stilini yaz"]);
+    var customField = h("div", { "class": "custom-field", hidden: "" }, [customLabel, textarea]);
+
+    var chipButtons = [];
+    var chipItems = STYLES.map(function (name) {
+      var b = h("button", { "class": "chip", type: "button", "aria-pressed": "false" }, [name]);
+      b.dataset.style = name;
+      chipButtons.push(b);
+      return h("li", null, [b]);
+    });
+    var customChip = h("button", { "class": "chip custom", type: "button", "aria-pressed": "false", "aria-controls": "ozel-" + data.id }, ["Kendi stilin"]);
+    customChip.dataset.style = CUSTOM;
+    chipButtons.push(customChip);
+    chipItems.push(h("li", null, [customChip]));
+
+    var chipList = h("ul", { "class": "chips" }, chipItems);
+
+    /* Görünümü durumdan çiz */
+    function render() {
+      chipButtons.forEach(function (b) {
+        b.setAttribute("aria-pressed", String(b.dataset.style === state.selected));
+      });
+
+      if (state.selected === CUSTOM) customField.removeAttribute("hidden");
+      else customField.setAttribute("hidden", "");
+
+      promptBody.textContent = "";
+      buildParts().forEach(function (p) {
+        promptBody.appendChild(p.hl ? h("mark", null, [p.text]) : document.createTextNode(p.text));
+      });
+    }
+
+    function resetCopyButton() {
+      copyBtn.classList.remove("done", "fail");
+      copyLabel.textContent = "Kopyala";
+    }
+
+    /* Olaylar */
+    chipList.addEventListener("click", function (e) {
+      var btn = e.target.closest ? e.target.closest("button.chip") : null;
+      if (!btn) return;
+      var value = btn.dataset.style;
+      state.selected = state.selected === value ? null : value;
+      render();
+      if (state.selected === CUSTOM) textarea.focus();
+    });
+
+    textarea.addEventListener("input", function () {
+      state.customText = textarea.value;
+      render();
+    });
+
+    copyBtn.addEventListener("click", function () {
+      var text = plainPrompt();
+      copyText(text).then(function (ok) {
+        clearTimeout(timer);
+        resetCopyButton();
+        if (ok) {
+          copyBtn.classList.add("done");
+          copyLabel.textContent = "Kopyalandı";
+          status.textContent = "Prompt panoya kopyalandı.";
+        } else {
+          // Pano erişimi yoksa metni seçili bırak; kullanıcı elle kopyalayabilsin.
+          copyBtn.classList.add("fail");
+          copyLabel.textContent = "Metni seçip kopyala";
+          status.textContent = "Otomatik kopyalama çalışmadı. Prompt seçildi, elle kopyalayabilirsin.";
+          selectNode(promptBody);
+        }
+        timer = setTimeout(function () {
+          resetCopyButton();
+          status.textContent = "";
+        }, COPIED_MS);
+      });
+    });
+
+    render();
+
+    var img = h("img", {
+      "class": "cover",
+      src: data.image,
+      alt: data.alt,
+      width: "640",
+      height: "800",
+      decoding: "async"
+    });
+    if (index > 0) img.setAttribute("loading", "lazy");
+
+    var promptBox = h("div", { "class": "prompt" }, [
+      h("div", { "class": "prompt-bar", "aria-hidden": "true" }, [
+        h("span", { "class": "dot r" }),
+        h("span", { "class": "dot y" }),
+        h("span", { "class": "dot g" }),
+        h("span", { "class": "file" }, ["prompt.txt"])
+      ]),
+      promptBody
+    ]);
+
+    return h("article", { "class": "card", "aria-labelledby": headingId }, [
+      img,
+      h("div", { "class": "card-body" }, [
+        h("h3", { id: headingId }, [data.title]),
+        h("p", { "class": "hint" }, ["Bir stil seç, prompt'u kopyala."]),
+        chipList,
+        customField,
+        promptBox,
+        copyBtn,
+        status
+      ])
+    ]);
+  }
+
+  var container = document.getElementById("cards");
+  SCENES.forEach(function (s, i) { container.appendChild(createCard(s, i)); });
+})();
+</script>
+</body>
+</html>
