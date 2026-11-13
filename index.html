@@ -196,6 +196,7 @@
     object-fit: cover;
     border-radius: 22px;
     background: #E7E1D5;
+    transition: opacity .2s ease;
   }
 
   .card-body { padding: 0 6px 6px; min-width: 0; }
@@ -507,10 +508,20 @@
   /* ---------- Veri ---------- */
   var PLACEHOLDER = "[STİLİ BURAYA YAZ]";
 
+  /* id: görsel dosya adında kullanılan sabit kimlik; name: çipte ve prompt'ta görünen ad. */
   var STYLES = [
-    "Minyatür", "İznik Çinisi", "Karagöz Perdesi", "Vitray",
-    "Neon Gece", "Kâğıt Kesme", "Retro Afiş", "Linol Baskı"
+    { id: "minyatur", name: "Osmanlı Minyatürü" },
+    { id: "cini", name: "İznik Çinisi" },
+    { id: "karagoz", name: "Karagöz Perdesi" },
+    { id: "vitray", name: "Vitray" },
+    { id: "neon", name: "Neon Gece" },
+    { id: "kagit", name: "Kâğıt Kesme" },
+    { id: "afis", name: "Retro Afiş" },
+    { id: "linol", name: "Linol Baskı" }
   ];
+
+  var FADE_MS = 200;
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
 
   var SCENES = [
     {
@@ -621,16 +632,24 @@
 
   /* ---------- Kart ---------- */
   function createCard(data, index) {
-    var state = { selected: null, customText: "" }; // selected: stil adı | "__custom__" | null
+    var state = { selected: null, customText: "" }; // selected: stil kimliği | "__custom__" | null
     var CUSTOM = "__custom__";
     var timer = null;
+
+    function styleById(id) {
+      for (var i = 0; i < STYLES.length; i++) {
+        if (STYLES[i].id === id) return STYLES[i];
+      }
+      return null;
+    }
 
     function currentStyle() {
       if (state.selected === CUSTOM) {
         var t = state.customText.replace(/\s+/g, " ").trim().replace(/[.\s]+$/, "");
         return t || null;
       }
-      return state.selected;
+      var st = styleById(state.selected);
+      return st ? st.name : null;
     }
 
     /* Prompt'u parçalar halinde üretir; düz metin ve vurgulu görünüm aynı kaynaktan gelir. */
@@ -671,9 +690,9 @@
     var customField = h("div", { "class": "custom-field", hidden: "" }, [customLabel, textarea]);
 
     var chipButtons = [];
-    var chipItems = STYLES.map(function (name) {
-      var b = h("button", { "class": "chip", type: "button", "aria-pressed": "false" }, [name]);
-      b.dataset.style = name;
+    var chipItems = STYLES.map(function (st) {
+      var b = h("button", { "class": "chip", type: "button", "aria-pressed": "false" }, [st.name]);
+      b.dataset.style = st.id;
       chipButtons.push(b);
       return h("li", null, [b]);
     });
@@ -692,6 +711,8 @@
 
       if (state.selected === CUSTOM) customField.removeAttribute("hidden");
       else customField.setAttribute("hidden", "");
+
+      updateImage();
 
       promptBody.textContent = "";
       buildParts().forEach(function (p) {
@@ -742,8 +763,6 @@
       });
     });
 
-    render();
-
     var img = h("img", {
       "class": "cover",
       src: data.image,
@@ -753,6 +772,46 @@
       decoding: "async"
     });
     if (index > 0) img.setAttribute("loading", "lazy");
+
+    /* Görsel: yalnızca dokunulan stilin dosyası istenir; yüklenemezse varsayılana dönülür. */
+    var shownSrc = data.image;
+    var imgToken = 0;
+    var fadeTimer = null;
+
+    function showImage(src, alt) {
+      shownSrc = src;
+      clearTimeout(fadeTimer);
+      if (!reduceMotion || !reduceMotion.matches) {
+        img.style.opacity = "0";
+        fadeTimer = setTimeout(function () {
+          img.src = src;
+          img.alt = alt;
+          img.style.opacity = "1";
+        }, FADE_MS);
+      } else {
+        img.src = src;
+        img.alt = alt;
+      }
+    }
+
+    function updateImage() {
+      var st = state.selected === CUSTOM ? null : styleById(state.selected);
+      var src = st ? "assets/" + data.id + "-" + st.id + ".jpg" : data.image;
+      if (src === shownSrc) return;
+      var alt = st ? data.title + ", " + st.name + " stili" : data.alt;
+      var token = ++imgToken;
+      if (!st) { showImage(src, alt); return; }
+      var loader = new Image();
+      loader.onload = function () {
+        if (token === imgToken) showImage(src, alt);
+      };
+      loader.onerror = function () {
+        if (token === imgToken) showImage(data.image, data.alt);
+      };
+      loader.src = src;
+    }
+
+    render();
 
     var promptBox = h("div", { "class": "prompt" }, [
       h("div", { "class": "prompt-bar", "aria-hidden": "true" }, [
