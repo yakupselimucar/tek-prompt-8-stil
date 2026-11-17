@@ -4,85 +4,41 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Yapay zeka ile baştan sona uygulama sistemi | @yakup.growth</title>
-<meta name="description" content="Bir uygulamayı yapay zekayla sıfırdan yayına kadar nasıl yapıyorum: talep testi, MD dosyası, tasarım, kodlama, hata ayıklama, yayın. Hazır prompt'larla.">
+<meta name="description" content="Bir uygulamayı yapay zekayla sıfırdan yayına kadar nasıl yapıyorum: 6 adım, MD iskeleti ve hazır prompt'lar. Tek PDF.">
 <meta name="theme-color" content="#14161a">
 <style>
-  :root{--ink:#14161a;--lime:#b6f23a;--paper:#f6f7f4;--mut:#5d636c;--soft:#aab0ba}
+  :root{--ink:#14161a;--lime:#b6f23a;--paper:#f6f7f4;--mut:#5d636c}
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;background:var(--ink);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 48px}
-  main,.site-nav{width:100%;max-width:560px}
-  :focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;background:var(--ink);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 40px}
+  main{width:100%;max-width:520px}
+  .tag{display:inline-block;background:var(--lime);color:var(--ink);font-weight:800;font-size:12px;letter-spacing:.14em;padding:5px 12px;border-radius:99px}
+  h1{font-size:clamp(28px,8vw,38px);line-height:1.1;letter-spacing:-.02em;margin:14px 0 10px}
+  h1 em{font-style:normal;color:var(--lime)}
+  p.lead{font-size:16px;line-height:1.5;color:#c9ced6;margin-bottom:22px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;background:var(--lime);color:var(--ink);font-size:18px;font-weight:800;text-decoration:none;border-radius:16px;border:0;box-shadow:0 6px 0 #6f9a1c}
+  .btn:active{transform:translateY(3px);box-shadow:0 3px 0 #6f9a1c}
+  .btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+  .meta{font-size:13px;color:#aab0ba;text-align:center;margin:14px 0 24px}
+  ol{list-style:none;counter-reset:n;background:var(--paper);color:var(--ink);border-radius:20px;padding:6px 20px}
+  ol li{counter-increment:n;display:flex;gap:14px;align-items:center;padding:15px 0;border-bottom:1px solid #dfe2dc;font-weight:700;font-size:16px;line-height:1.3}
+  ol li:last-child{border-bottom:0}
+  ol li::before{content:counter(n);flex:none;width:30px;height:30px;border-radius:9px;background:var(--ink);color:var(--lime);display:grid;place-items:center;font-size:15px;font-weight:800}
+  .incl{margin-top:14px;padding:14px 18px;border:1px solid #2a2e35;border-radius:16px;font-size:14px;line-height:1.5;color:#c9ced6}
+  .incl b{color:#fff}
+  .note{font-size:13px;line-height:1.5;color:#aab0ba;margin-top:20px}
+  .note a{color:var(--lime)}
+  .alt{display:block;text-align:center;margin-top:14px;font-size:14px;color:var(--lime)}
 
-  /* Site gezinme çubuğu */
-  .site-nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:26px}
+  .site-nav{width:100%;max-width:520px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:26px}
   .site-nav ul{list-style:none;display:flex;gap:6px;flex-wrap:wrap}
   .site-nav ul a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:99px;font-size:14px;font-weight:700;color:#c9ced6;text-decoration:none;border:1px solid #2a2e35}
   .site-nav ul a:hover{border-color:var(--lime);color:#fff}
   .site-nav ul a[aria-current="page"]{background:#fff;color:var(--ink);border-color:#fff}
+  .site-nav ul a:focus-visible,.badge:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
   .badge{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:99px;background:var(--lime);color:var(--ink);font-weight:800;font-size:13px;letter-spacing:.02em;text-decoration:none}
-  .badge:hover{filter:brightness(1.05)}
-
-  .tag{display:inline-block;background:var(--lime);color:var(--ink);font-weight:800;font-size:12px;letter-spacing:.14em;padding:5px 12px;border-radius:99px}
-  h1{font-size:clamp(28px,8vw,40px);line-height:1.1;letter-spacing:-.02em;margin:14px 0 10px}
-  h1 em{font-style:normal;color:var(--lime)}
-  p.lead{font-size:16px;line-height:1.55;color:#c9ced6;margin-bottom:22px}
-
-  .btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;background:var(--lime);color:var(--ink);font-size:18px;font-weight:800;text-decoration:none;border-radius:16px;border:0;box-shadow:0 6px 0 #6f9a1c}
-  .btn:active{transform:translateY(3px);box-shadow:0 3px 0 #6f9a1c}
-
-  /* Akış özeti */
-  .flow{list-style:none;counter-reset:n;background:var(--paper);color:var(--ink);border-radius:20px;padding:6px 20px;margin-bottom:34px}
-  .flow li{counter-increment:n;border-bottom:1px solid #dfe2dc}
-  .flow li:last-child{border-bottom:0}
-  .flow a{display:flex;gap:14px;align-items:center;padding:15px 0;color:inherit;text-decoration:none;font-weight:700;font-size:16px;line-height:1.3}
-  .flow a::before{content:counter(n);flex:none;width:30px;height:30px;border-radius:9px;background:var(--ink);color:var(--lime);display:grid;place-items:center;font-size:15px;font-weight:800}
-  .flow a:focus-visible{outline-color:var(--ink)}
-
-  /* Adım kartları */
-  section.step{background:var(--paper);color:var(--ink);border-radius:20px;padding:22px 20px;margin-bottom:16px;scroll-margin-top:16px}
-  .step .num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--ink);color:var(--lime);font-size:15px;font-weight:800;margin-bottom:10px}
-  .step h2{font-size:22px;line-height:1.2;letter-spacing:-.01em;margin-bottom:10px}
-  .step p{font-size:16px;line-height:1.55;color:#2a2e35;margin-bottom:12px}
-  .step p:last-child{margin-bottom:0}
-  .step ul{list-style:none;margin:4px 0 14px}
-  .step li{position:relative;padding:9px 0 9px 24px;font-size:15.5px;line-height:1.45;font-weight:600;border-top:1px solid #dfe2dc}
-  .step li:first-child{border-top:0}
-  .step li::before{content:"";position:absolute;left:2px;top:17px;width:10px;height:10px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 2px var(--ink)}
-  .step .key{font-weight:800}
-
-  /* Prompt kutuları */
-  .snip{margin:14px 0 0}
-  .snip h3{font-size:14px;font-weight:800;margin-bottom:8px}
-  .code{background:var(--ink);color:#e9e7e1;border-radius:14px;overflow:hidden}
-  .code pre{margin:0;padding:14px 16px;font-family:"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text}
-  .copy{appearance:none;-webkit-appearance:none;display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;border:0;border-top:1px solid #2a2e35;background:#1d2026;color:var(--lime);font:inherit;font-weight:800;font-size:15px;cursor:pointer}
-  .copy:hover{background:#232830}
-  .copy.done{background:var(--lime);color:var(--ink)}
-  .copy.fail{color:#fff}
-  .copy:focus-visible{outline-offset:-3px}
-
-  .err{background:#1d2026;border:1px solid #2a2e35;border-radius:20px;padding:22px 20px;margin:28px 0 16px}
-  .err h2{font-size:20px;margin-bottom:10px}
-  .err ul{list-style:none}
-  .err li{position:relative;padding:10px 0 10px 26px;font-size:15.5px;line-height:1.45;font-weight:600;border-top:1px solid #2a2e35}
-  .err li:first-child{border-top:0}
-  .err li::before{content:"×";position:absolute;left:2px;top:9px;font-size:20px;font-weight:800;color:var(--lime);line-height:1.2}
-
-  .closing{font-size:16px;line-height:1.55;color:#c9ced6;margin:8px 0 18px}
-  .note{font-size:13px;line-height:1.5;color:var(--soft);margin-top:22px;text-align:center}
-  .note a{color:var(--lime)}
-
-  .more{margin-top:26px;display:grid;gap:10px}
-  .more a{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:56px;padding:0 18px;border:1px solid #2a2e35;border-radius:16px;color:#fff;text-decoration:none;font-weight:700;font-size:15px}
-  .more a:hover{border-color:var(--lime)}
-  .more a span{color:var(--lime);font-weight:800}
-
-  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn:active{transform:none}}
 </style>
 </head>
 <body>
-
 <nav class="site-nav" aria-label="Sayfalar">
   <ul>
     <li><a href="../">Prompt'lar</a></li>
@@ -91,226 +47,28 @@
   </ul>
   <a class="badge" href="https://www.instagram.com/yakup.growth/" target="_blank" rel="noopener">@yakup.growth</a>
 </nav>
-
 <main>
   <span class="tag">SİSTEM</span>
-  <h1>Uygulamayı yapay zekayla <em>baştan sona</em> yapmak</h1>
-  <p class="lead">Bir uygulamayı sıfırdan yayına kadar yapay zekayla üretmenin sırası şu: önce talebi test et, sonra fikri yazıya dök, tasarla, kodlat, hataları ayıkla ve yayınla. Bu benim çalışma düzenim; kendi projene göre uyarlayabilirsin.</p>
+  <h1>Yapay zekayla <em>baştan sona</em> uygulama yap</h1>
+  <p class="lead">Talep testinden mağaza yayınına altı adım. Benim çalışma düzenim, hazır prompt'larla tek PDF'te.</p>
 
-  <ol class="flow" aria-label="Altı adım">
-    <li><a href="#adim-1">Pazarlama ve talep testi</a></li>
-    <li><a href="#adim-2">Projeyi anlat, MD dosyası çıkar</a></li>
-    <li><a href="#adim-3">Detaylı tasarım</a></li>
-    <li><a href="#adim-4">Kodlama, bitene kadar</a></li>
-    <li><a href="#adim-5">Hata ayıklama</a></li>
-    <li><a href="#adim-6">Yayınlama ve reject yönetimi</a></li>
+  <a class="btn" href="yapay-zeka-uygulama-sistemi.pdf" download="yapay-zeka-uygulama-sistemi.pdf">PDF'i indir</a>
+  <p class="meta">PDF · 4 sayfa · A4</p>
+
+  <ol>
+    <li>Önce pazarlama: talebi kodlamadan test et</li>
+    <li>Projeyi konuşarak anlat, MD dosyası çıkar</li>
+    <li>MD dosyasına uygun detaylı tasarım yap</li>
+    <li>Tasarım ve MD ile bitene kadar kodlat</li>
+    <li>Hataları tek tek ayıkla</li>
+    <li>Yayınla, reject gelirse düzeltip tekrar gönder</li>
   </ol>
 
-  <section class="step" id="adim-1" aria-labelledby="h1">
-    <span class="num" aria-hidden="true">1</span>
-    <h2 id="h1">Önce pazarlama, sonra kod</h2>
-    <p>Projeye başlamadan önce yapacağın en önemli iş, fikre gerçekten bir istek olup olmadığını görmek. Bunu uygulama yokken bile yapabilirsin.</p>
-    <ul>
-      <li>Fikrini tek cümleyle anlatan kısa içerikler (Reels, post, hikaye) paylaş.</li>
-      <li>Yorumları, kaydedilenleri, DM'leri ve "link ver" tarzı istekleri takip et.</li>
-      <li>Hedef kitlenin kullandığı alternatifleri bul ve kullanıcıların onlardan neyden şikayet ettiğini oku.</li>
-      <li>Bir bekleme listesi veya basit bir tanıtım sayfası aç, kaç kişinin bıraktığını say.</li>
-    </ul>
-    <p>İlgi görmüyorsa fikri değiştir veya ufala. İlgi varsa 2. adıma geç. Bu adımı atlamak, sonradan en çok pişman olunan hata.</p>
-  </section>
+  <p class="incl"><b>Ayrıca içinde:</b> MD dosyası iskeleti, kodlama ve hata için hazır prompt'lar, sık yapılan hatalar.</p>
 
-  <section class="step" id="adim-2" aria-labelledby="h2">
-    <span class="num" aria-hidden="true">2</span>
-    <h2 id="h2">Projeyi konuşarak anlat, MD dosyası oluştur</h2>
-    <p>Kodlamaya başlamadan önce projeyi yapay zekaya konuşarak anlatıyorum. Yazmaktan çok daha hızlı ve unutulan detay daha az oluyor. Sonunda bunu uzun bir MD (Markdown) dosyasına çeviriyorum. Bu dosya projenin ana unsuru oluyor.</p>
-    <p class="key">Anlatırken şunları mutlaka kapsa:</p>
-    <ul>
-      <li>Uygulama ne yapıyor ve kimin için?</li>
-      <li>Uygulamanın ana özelliği ne?</li>
-      <li>Uygulama hangi sorunu çözüyor?</li>
-      <li>İlk versiyonunda (MVP) neler olmalı?</li>
-      <li>Özellikler (olmazsa olmaz ve sonra eklenecek olarak ayır)</li>
-      <li>Veri yapısı: hangi veriler tutulacak?</li>
-      <li>Giriş, abonelik, bildirim gibi teknik gereksinimler</li>
-      <li>Kullanılacak teknoloji (örneğin Flutter, Supabase veya Firebase)</li>
-    </ul>
-    <p>MD dosyası ne kadar detaylıysa, sonraki adımlarda yapay zekanın tahmin yürütmesi o kadar azalır. Tahmin azalınca hata da azalır.</p>
-
-    <div class="snip">
-      <h3>MD dosyası iskeleti</h3>
-      <div class="code">
-        <pre>
-# Proje Adı
-
-## 1. Özet
-Uygulama ne yapıyor, kimin için, hangi problemi çözüyor?
-
-## 2. Hedef Kullanıcı
-Kim kullanacak, neden kullanacak?
-
-## 3. Özellikler
-- Olmazsa olmaz:
-- Sonra eklenecek:
-
-## 4. Ekranlar ve Akışlar
-Her ekranın adı, içeriği ve diğer ekranlara geçişi.
-
-## 5. Veri Yapısı
-Tutulacak veriler ve aralarındaki ilişki.
-
-## 6. Teknik Altyapı
-Framework, backend, giriş yöntemi, abonelik, bildirim.
-
-## 7. Monetizasyon
-Ücretsiz/ücretli ayrımı, reklam, abonelik.
-
-## 8. Yayın Notları
-Mağaza açıklaması, anahtar kelimeler, gizlilik politikası.</pre>
-        <button class="copy" type="button">İskeleti kopyala</button>
-      </div>
-    </div>
-
-    <div class="snip">
-      <h3>MD dosyası için prompt</h3>
-      <div class="code">
-        <pre>Sana projemi anlatacağım. Anlattıklarımı yukarıdaki başlıklara göre detaylı bir MD dosyasına dönüştür. Eksik gördüğün yerleri bana sor, tahmin yürütme.</pre>
-        <button class="copy" type="button">Prompt'u kopyala</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="step" id="adim-3" aria-labelledby="h3">
-    <span class="num" aria-hidden="true">3</span>
-    <h2 id="h3">MD dosyasına uygun detaylı tasarım</h2>
-    <p>MD dosyası hazır olunca tasarımı Claude Design ile yapıyorum. Dosyayı baz alıp tüm ekranları üretiyorum. Kodlama sırasında Claude'un "bu ekran nasıl görünmeliydi" diye tahmin etmesini istemiyorum.</p>
-    <ul>
-      <li>Her ana ekranı ayrı ayrı iste: onboarding, ana ekran, detay, ayarlar, abonelik ekranı.</li>
-      <li>Boş, yüklenme ve hata durumlarını da tasarlat.</li>
-      <li>Renk, yazı tipi ve buton stilini baştan sabitle, tüm ekranlar aynı dilde olsun.</li>
-      <li>Tasarımı MD dosyasıyla yan yana kontrol et: dosyada olup tasarımda olmayan ekran var mı?</li>
-    </ul>
-    <p>Tasarım ne kadar eksiksiz olursa kodlama o kadar tek seferde ilerler.</p>
-  </section>
-
-  <section class="step" id="adim-4" aria-labelledby="h4">
-    <span class="num" aria-hidden="true">4</span>
-    <h2 id="h4">Kodlama, bitene kadar</h2>
-    <p>Kodlama aşamasında Claude'a iki şeyi veriyorum: hazırladığım tasarımlar ve projeyi anlattığım MD dosyası. Ardından projeyi bitirene kadar kodlamasını istiyorum.</p>
-    <ul>
-      <li>Tasarımı ve MD dosyasını aynı anda ver, ikisi birbirini tamamlıyor.</li>
-      <li>Tek seferde her şeyi isteme: önce iskelet ve veri yapısı, sonra ekranlar, sonra özellikler.</li>
-      <li>Claude her bölümü bitirdikçe uygulamayı çalıştırıp kontrol et.</li>
-      <li>Yarım kalan veya atlanan yerler için "MD dosyasındaki tüm maddeler tamamlandı mı diye kontrol et" de.</li>
-    </ul>
-    <p>Bu aşamada senin işin kod yazmak değil, yönetmek: neyin bittiğini ve neyin eksik kaldığını takip etmek.</p>
-
-    <div class="snip">
-      <h3>Kodlama için prompt</h3>
-      <div class="code">
-        <pre>Ekte projenin MD dosyası ve tasarımları var. MD dosyasındaki tüm özellikleri tasarımlara uygun şekilde kodla. Bitirene kadar devam et, bitince MD dosyasındaki maddeleri tek tek kontrol edip eksik kalan var mı söyle.</pre>
-        <button class="copy" type="button">Prompt'u kopyala</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="step" id="adim-5" aria-labelledby="h5">
-    <span class="num" aria-hidden="true">5</span>
-    <h2 id="h5">Hata ayıklama</h2>
-    <p>Kodlama bitince mutlaka hatalar çıkıyor. Bu normal, sürecin parçası. Önemli olan hataları düzenli şekilde gidermek.</p>
-    <ul>
-      <li>Uygulamayı gerçek cihazda baştan sona kullan ve gördüğün her hatayı not al.</li>
-      <li>Hatayı Claude'a verirken tam hata mesajını, hangi ekranda olduğunu ve ne yapmaya çalıştığını yaz.</li>
-      <li>Hataları tek tek çöz; aynı anda beş şeyi düzelttirirsen yeni hata çıkarma riski artar (artık pek de öyle olmuyor).</li>
-      <li>Her düzeltmeden sonra aynı akışı tekrar dene.</li>
-      <li>Test yazarsan çalışan kısımları sürekli "bozuldu mu" diye kontrol etmeden ilerleyebilirsin.</li>
-    </ul>
-    <p>Tüm ana akışlar sorunsuz çalışınca yayın aşamasına geç.</p>
-
-    <div class="snip">
-      <h3>Hata için prompt</h3>
-      <div class="code">
-        <pre>Şu ekranda şu hatayı alıyorum: [hata mesajı]. Şunu yapmaya çalışıyordum: [adım]. Sebebini bul ve düzelt, başka yerleri değiştirme.</pre>
-        <button class="copy" type="button">Prompt'u kopyala</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="step" id="adim-6" aria-labelledby="h6">
-    <span class="num" aria-hidden="true">6</span>
-    <h2 id="h6">Yayınlama ve reject yönetimi</h2>
-    <p>Hatalar giderilince App Store ve Google Play yayın süreçlerine geçiyorum. İlk gönderimde reject gelmesi çok normal; panik yapmadan sebebi okuyup düzenliyorum ve tekrar gönderiyorum.</p>
-    <ul>
-      <li>Mağaza listesini hazırla: ad, açıklama, ekran görüntüleri, gizlilik politikası.</li>
-      <li>Abonelik veya giriş varsa test hesabını ve açıklamasını inceleme notuna ekle.</li>
-      <li>Reject mesajını olduğu gibi Claude'a ver ve hangi maddeye takıldığını birlikte çöz.</li>
-      <li>Düzeltip yeniden gönder; gerekirse bu döngüyü birkaç kez tekrarla.</li>
-    </ul>
-    <p>Yayına çıktıktan sonra da pazarlama bitmiyor: ilk kullanıcılardan gelen geri bildirimle uygulamayı geliştirmeye devam et.</p>
-  </section>
-
-  <section class="err" aria-labelledby="hatalar">
-    <h2 id="hatalar">Sık yapılan hatalar</h2>
-    <ul>
-      <li>Talebi test etmeden kodlamaya başlamak</li>
-      <li>Projeyi kısa ve belirsiz anlatıp yapay zekanın tahmin etmesine bırakmak</li>
-      <li>Tasarım olmadan kodlama istemek</li>
-      <li>Her şeyi tek mesajda istemek</li>
-      <li>İlk reject'te vazgeçmek</li>
-    </ul>
-  </section>
-
-  <p class="closing">Bu sistem sihirli bir kısayol değil, düzenli bir çalışma sırası. Net anlat, doğru sırayla ilerle, hatalardan yılma. Takıldığın bir yer olursa Instagram'dan yaz.</p>
-
-  <a class="btn" href="https://www.instagram.com/yakup.growth/" target="_blank" rel="noopener">Instagram'da @yakup.growth</a>
-
-  <nav class="more" aria-label="Diğer sayfalar">
-    <a href="../paywall-kontrol-listesi/">Paywall kontrol listesi <span aria-hidden="true">→</span></a>
-    <a href="../">Tek prompt, 8 farklı stil <span aria-hidden="true">→</span></a>
-  </nav>
+  <a class="alt" href="yapay-zeka-uygulama-sistemi.pdf">İndirme başlamazsa PDF'i tarayıcıda aç</a>
 
   <p class="note">Bu sistem benim çalışma düzenim, garanti değil. Kendi projende dene, kendine göre uyarla.<br>@yakup.growth</p>
 </main>
-
-<script>
-(function () {
-  "use strict";
-  function fallbackCopy(text) {
-    var ta = document.createElement("textarea");
-    ta.value = text;
-    ta.setAttribute("readonly", "");
-    ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px;";
-    document.body.appendChild(ta);
-    var ok = false;
-    try { ta.focus(); ta.select(); ta.setSelectionRange(0, text.length); ok = document.execCommand("copy"); } catch (e) { ok = false; }
-    document.body.removeChild(ta);
-    return ok;
-  }
-  function copyText(text) {
-    if (navigator.clipboard && window.isSecureContext && navigator.clipboard.writeText) {
-      return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return fallbackCopy(text); });
-    }
-    return Promise.resolve(fallbackCopy(text));
-  }
-  Array.prototype.forEach.call(document.querySelectorAll(".code"), function (box) {
-    var btn = box.querySelector(".copy");
-    var pre = box.querySelector("pre");
-    var label = btn.textContent;
-    var timer;
-    btn.addEventListener("click", function () {
-      copyText(pre.textContent.trim()).then(function (ok) {
-        clearTimeout(timer);
-        btn.classList.remove("done", "fail");
-        btn.classList.add(ok ? "done" : "fail");
-        btn.textContent = ok ? "Kopyalandı" : "Metni seçip kopyala";
-        if (!ok) {
-          var r = document.createRange(); r.selectNodeContents(pre);
-          var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-        }
-        timer = setTimeout(function () { btn.classList.remove("done", "fail"); btn.textContent = label; }, 2000);
-      });
-    });
-  });
-})();
-</script>
 </body>
 </html>
