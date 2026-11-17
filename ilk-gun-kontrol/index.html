@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uygulaman ilk gün silinmesin: 15 maddelik kontrol prompt'u | @yakup.growth</title>
+<meta name="description" content="Kullanıcılar uygulamanı ilk gün siliyorsa sorun 15 hatadan birinde olabilir. Prompt'u Claude'a yapıştır, uygulamanı tek tek kontrol ettir.">
+<meta name="theme-color" content="#14161a">
+<style>
+  :root{--ink:#14161a;--lime:#b6f23a;--paper:#f6f7f4;--mut:#5d636c}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;background:var(--ink);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 40px}
+  main{width:100%;max-width:520px}
+  .tag{display:inline-block;background:var(--lime);color:var(--ink);font-weight:800;font-size:12px;letter-spacing:.14em;padding:5px 12px;border-radius:99px}
+  h1{font-size:clamp(28px,8vw,38px);line-height:1.1;letter-spacing:-.02em;margin:14px 0 10px}
+  h1 em{font-style:normal;color:var(--lime)}
+  p.lead{font-size:16px;line-height:1.5;color:#c9ced6;margin-bottom:22px}
+  .btn{appearance:none;-webkit-appearance:none;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;background:var(--lime);color:var(--ink);font-size:18px;font-weight:800;text-decoration:none;border-radius:16px;border:0;box-shadow:0 6px 0 #6f9a1c}
+  .btn:active{transform:translateY(3px);box-shadow:0 3px 0 #6f9a1c}
+  .btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+  .btn.done{background:#fff;box-shadow:0 6px 0 #aab0ba}
+  .meta{font-size:13px;color:#aab0ba;text-align:center;margin:14px 0 24px}
+  ol{list-style:none;counter-reset:n;background:var(--paper);color:var(--ink);border-radius:20px;padding:6px 20px}
+  ol li{counter-increment:n;display:flex;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid #dfe2dc;font-weight:700;font-size:15.5px;line-height:1.3}
+  ol li:last-child{border-bottom:0}
+  ol li::before{content:counter(n);flex:none;width:30px;height:30px;border-radius:9px;background:var(--ink);color:var(--lime);display:grid;place-items:center;font-size:14px;font-weight:800}
+  details{margin-top:16px;border:1px solid #2a2e35;border-radius:16px;overflow:hidden}
+  summary{cursor:pointer;list-style:none;padding:16px 18px;font-weight:700;font-size:15px;color:var(--lime)}
+  summary::-webkit-details-marker{display:none}
+  summary:focus-visible{outline:3px solid var(--lime);outline-offset:-3px}
+  details[open] summary{border-bottom:1px solid #2a2e35}
+  pre{margin:0;padding:16px;font-family:"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.65;color:#e9e7e1;white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text;background:#1a1d22}
+  .note{font-size:13px;line-height:1.5;color:#aab0ba;margin-top:20px}
+
+  .site-nav{width:100%;max-width:520px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:26px}
+  .site-nav ul{list-style:none;display:flex;gap:6px;flex-wrap:wrap}
+  .site-nav ul a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:99px;font-size:14px;font-weight:700;color:#c9ced6;text-decoration:none;border:1px solid #2a2e35}
+  .site-nav ul a:hover{border-color:var(--lime);color:#fff}
+  .site-nav ul a[aria-current="page"]{background:#fff;color:var(--ink);border-color:#fff}
+  .site-nav ul a:focus-visible,.badge:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+  .badge{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:99px;background:var(--lime);color:var(--ink);font-weight:800;font-size:13px;letter-spacing:.02em;text-decoration:none}
+  @media (prefers-reduced-motion:reduce){.btn:active{transform:none}}
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Sayfalar">
+  <ul>
+    <li><a href="../">Prompt'lar</a></li>
+    <li><a href="../paywall-kontrol-listesi/">Paywall</a></li>
+    <li><a href="../sistem/">Sistem</a></li>
+    <li><a href="./" aria-current="page">İlk gün</a></li>
+  </ul>
+  <a class="badge" href="https://www.instagram.com/yakup.growth/" target="_blank" rel="noopener">@yakup.growth</a>
+</nav>
+<main>
+  <span class="tag">KONTROL PROMPT'U</span>
+  <h1>Uygulaman <em>ilk gün</em> silinmesin</h1>
+  <p class="lead">Kullanıcılar uygulamanı ilk gün siliyorsa sorun çoğunlukla fikirde değil, ilk deneyimde. Prompt'u Claude'a yapıştır, uygulamanı 15 maddeyle tek tek kontrol ettir.</p>
+
+  <button class="btn" type="button" id="copy">Prompt'u kopyala</button>
+  <p class="meta" id="status" role="status" aria-live="polite">Claude'a yapıştır · 15 madde · ekran görüntüsü ya da kod ekleyebilirsin</p>
+
+  <ol>
+    <li>Kayıt olmadan hiçbir şey göstermiyorsun</li>
+    <li>Onboarding uygulamanın değerini yansıtmıyor</li>
+    <li>Kullanıcıdan her şeyi ilk gün istiyorsun</li>
+    <li>Ana özellik ilk ekranda görünmüyor</li>
+    <li>Bildirim iznini ilk saniyede istiyorsun</li>
+    <li>Paywall değer anlaşılmadan çıkıyor</li>
+    <li>İlk başarıya ulaşmak çok uzun sürüyor</li>
+    <li>İlk başarıyı kutlamıyorsun</li>
+    <li>Ana özelliğin ne işe yaradığı anlaşılmıyor</li>
+    <li>Uygulama akışında sorunlar var</li>
+    <li>Ertesi gün dönmek için sebep bırakmıyorsun</li>
+    <li>Sosyal özellikler boşken uygulama ıssız görünüyor</li>
+    <li>Mağaza görselleri uygulamadan farklı şeyler vaat ediyor</li>
+    <li>İlk açılış yavaş</li>
+    <li>Kullanıcının nerede koptuğunu ölçmüyorsun</li>
+  </ol>
+
+  <details>
+    <summary>Prompt'u gör</summary>
+<pre id="prompt">Mobil uygulamamı, kullanıcıların uygulamayı ilk gün silmesine yol açan 15 hataya göre denetle. Aşağıdaki her madde için uygulamamda bu hata var mı kontrol et.
+
+ÖNCE BİLGİ TOPLA
+Şunları benden iste, eksik olanı tahmin etme: uygulamanın adı ve kime hitap ettiği, ana özelliği, ilk açılıştan ana özelliğe kadar ekran akışı (ekran görüntüsü, kod ya da kısa anlatım), bildirim izninin ve paywall'ın hangi ekranda çıktığı, mağaza görselleri, varsa analitik kurulumu. Bir madde için bilgi yoksa "Bilgi yok" yaz ve neye bakmam gerektiğini söyle.
+
+15 MADDE
+1. Kayıt olmadan hiçbir şey göstermiyorsun. Giriş ya da kayıt olmadan uygulamanın değeri görülebiliyor mu?
+2. Onboarding uygulamanın değerini yansıtmıyor. Ekranlar kullanıcıya ne kazanacağını mı anlatıyor, yoksa sadece özellik mi sayıyor?
+3. Kullanıcıdan her şeyi ilk gün istiyorsun. İlk gün kaç bilgi, izin ve form isteniyor? Hangisi sonraya bırakılabilir?
+4. Uygulamanın ana özelliği ilk ekranda görünmüyor. Ana özelliğe ilk ekrandan kaç dokunuşla ulaşılıyor?
+5. Bildirim izni ilk saniyede isteniyor. İzin, kullanıcı değeri görmeden mi çıkıyor? Önce ne için gerektiği anlatılıyor mu?
+6. Paywall değer anlaşılmadan çıkıyor. Kullanıcı ana özelliği denemeden önce paywall görüyor mu?
+7. İlk başarıya ulaşmak çok uzun sürüyor. Kullanıcının ilk "oldu" dediği an hangisi ve uygulamayı açtıktan kaç adım ya da saniye sonra geliyor?
+8. İlk başarı kutlanmıyor. İlk başarıdan sonra geri bildirim, animasyon ya da bir sonraki adım var mı?
+9. Ana özelliğin ne işe yaradığı anlaşılmıyor. İlk kez gören biri, açıklama okumadan bunun ne işe yaradığını anlar mı?
+10. Uygulama akışında sorunlar var. Ölü uç, geri dönüşü olmayan ekran, belirsiz buton, eksik hata mesajı ya da çökme var mı?
+11. Ertesi gün dönmek için sebep bırakılmıyor. Hatırlatma, seri, yarım kalan iş ya da yeni içerik gibi bir geri dönüş nedeni var mı?
+12. Sosyal özellikler boşken uygulama ıssız görünüyor. Liste, akış ya da sıralama ilk kullanıcıda boş mu? Boş durum ekranı ne söylüyor?
+13. Mağaza görselleri uygulamadan farklı şeyler vaat ediyor. Ekran görüntüleri ve açıklama, ilk açılışta görülenle uyuşuyor mu?
+14. İlk açılış yavaş. Soğuk açılış, ilk ekran ve ilk içerik ne kadar sürede geliyor? Neler bekletiyor?
+15. Kullanıcının nerede koptuğu ölçülmüyor. İlk gün adımlarında (açılış, onboarding, ilk başarı, paywall) olay takibi var mı?
+
+ÇIKTI
+Önce şu tabloyu ver: # | Madde | Durum | Gerekçe | Tek güncellemede düzeltme. Durum yalnızca şunlardan biri olsun: Sorun var, Kısmen, Sorun yok, Bilgi yok.
+Sonra kullanıcı kaybına en çok yol açan 3 maddeyi sırala. Her biri için somut adımları ve tahmini işi (saat) yaz.
+En sonda bu hafta yapılabilecek 5 maddelik bir güncelleme planı ver.
+
+KURALLAR
+Dürüst ol: sorun yoksa "Sorun yok" de, madde uydurma. Genel tavsiye verme, benim uygulamamdaki ekrana ve akışa göre yaz. Düzeltmeler mümkün olduğunca tek güncellemeye sığacak kadar küçük olsun.</pre>
+  </details>
+
+  <p class="note">Bu prompt bir kontrol listesi, garanti değil. Önce en çok kopuş yaşanan 3 maddeyi düzeltip etkisini ölç.<br>@yakup.growth</p>
+</main>
+<script>
+(function () {
+  "use strict";
+  var btn = document.getElementById("copy");
+  var status = document.getElementById("status");
+  var pre = document.getElementById("prompt");
+  var idle = status.textContent;
+  var timer;
+
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px;";
+    document.body.appendChild(ta);
+    var ok = false;
+    try { ta.focus(); ta.select(); ta.setSelectionRange(0, text.length); ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return fallbackCopy(text); });
+    }
+    return Promise.resolve(fallbackCopy(text));
+  }
+
+  btn.addEventListener("click", function () {
+    copyText(pre.textContent).then(function (ok) {
+      clearTimeout(timer);
+      if (ok) {
+        btn.classList.add("done");
+        btn.textContent = "Kopyalandı";
+        status.textContent = "Prompt panoya kopyalandı. Claude'a yapıştırabilirsin.";
+      } else {
+        btn.textContent = "Metni seçip kopyala";
+        status.textContent = "Otomatik kopyalama çalışmadı. Prompt seçildi, elle kopyalayabilirsin.";
+        pre.parentNode.open = true;
+        var r = document.createRange(); r.selectNodeContents(pre);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      }
+      timer = setTimeout(function () {
+        btn.classList.remove("done");
+        btn.textContent = "Prompt'u kopyala";
+        status.textContent = idle;
+      }, 2500);
+    });
+  });
+})();
+</script>
+</body>
+</html>
