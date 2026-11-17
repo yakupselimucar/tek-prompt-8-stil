@@ -26,9 +26,24 @@
   .note{font-size:13px;line-height:1.5;color:#aab0ba;margin-top:20px}
   .note a{color:var(--lime)}
   .alt{display:block;text-align:center;margin-top:14px;font-size:14px;color:var(--lime)}
+  .site-nav{width:100%;max-width:520px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:26px}
+  .site-nav ul{list-style:none;display:flex;gap:6px;flex-wrap:wrap}
+  .site-nav ul a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:99px;font-size:14px;font-weight:700;color:#c9ced6;text-decoration:none;border:1px solid #2a2e35}
+  .site-nav ul a:hover{border-color:var(--lime);color:#fff}
+  .site-nav ul a[aria-current="page"]{background:#fff;color:var(--ink);border-color:#fff}
+  .site-nav ul a:focus-visible,.badge:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+  .badge{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:99px;background:var(--lime);color:var(--ink);font-weight:800;font-size:13px;letter-spacing:.02em;text-decoration:none}
 </style>
 </head>
 <body>
+<nav class="site-nav" aria-label="Sayfalar">
+  <ul>
+    <li><a href="../">Prompt'lar</a></li>
+    <li><a href="./" aria-current="page">Paywall</a></li>
+    <li><a href="../sistem/">Sistem</a></li>
+  </ul>
+  <a class="badge" href="https://www.instagram.com/yakup.growth/" target="_blank" rel="noopener">@yakup.growth</a>
+</nav>
 <main>
   <span class="tag">KONTROL LİSTESİ</span>
   <h1>Paywall'ın <em>hazır mı?</em></h1>

@@ -76,6 +76,60 @@
     border: 0;
   }
 
+  /* ---------- Site gezinme çubuğu ---------- */
+  .site-nav .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 16px;
+  }
+
+  .site-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .site-nav ul a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
+    background: var(--white);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+  }
+
+  .site-nav ul a:hover { border-color: var(--ink); }
+
+  .site-nav ul a[aria-current="page"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--white);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--ink);
+    font-weight: 800;
+    font-size: 14px;
+    text-decoration: none;
+  }
+
   /* ---------- Başlık bölümü ---------- */
   .hero {
     position: relative;
@@ -455,6 +509,17 @@
 </style>
 </head>
 <body>
+
+<nav class="site-nav" aria-label="Sayfalar">
+  <div class="wrap">
+    <ul>
+      <li><a href="./" aria-current="page">Prompt'lar</a></li>
+      <li><a href="paywall-kontrol-listesi/">Paywall</a></li>
+      <li><a href="sistem/">Sistem</a></li>
+    </ul>
+    <a class="badge" href="https://www.instagram.com/yakup.growth/" target="_blank" rel="noopener">@yakup.growth</a>
+  </div>
+</nav>
 
 <header class="hero">
   <div class="wrap">
